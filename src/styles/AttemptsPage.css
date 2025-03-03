@@ -1,0 +1,116 @@
+.attempts-page {
+  background-color: black;
+  color: white;
+  text-align: center;
+}
+header.attempts-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid white;
+  margin-top: 10px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+.attempts-page main {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.attempts-page-section img {
+  width: 80px;
+  transform: scale(1.5);
+  transform: translate(0, -25px);
+}
+.attempts-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  cursor: pointer;
+  margin: 40px auto;
+}
+img.setaUp {
+  width: 10px;
+  transform: translate(0, 2px);
+}
+img.setaDown {
+  transform: rotate(180deg);
+  transform-origin: center;
+  width: 10px;
+}
+.setas:hover {
+  cursor: pointer;
+  box-shadow: 0 0px 6px rgba(253, 253, 253, 0.692);
+}
+
+.tentativas {
+  background-color: white;
+  color: black;
+  border-radius: 14px;
+  margin: auto 10px;
+  padding: 10px;
+  box-shadow: 0 0px 6px rgba(253, 253, 253, 0.315);
+}
+.valvulas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  gap: 10px;
+}
+.valvulas-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.valvulas-item div {
+  background-color: white;
+  color: black;
+  border-radius: 8px;
+  padding: 10px;
+}
+.valvulas-item input {
+  width: 10px;
+  transform: scale(1.5);
+  background-color: black;
+  color: white;
+  height: 30px;
+  text-align: center;
+  width: 20px;
+  font-weight: bolder;
+  border: none;
+  z-index: 1000;
+  border-radius: 4px;
+}
+.attempts-page-section {
+  border-radius: 20px;
+  padding: 10px;
+  background: linear-gradient(
+    145deg,
+    #05f2db 5%,
+    #50bfab 15%,
+    #f23c13 60%,
+    #f23847 90%
+  ); /* Gradiente suave */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.281);
+}
+.confirmar {
+  width: 95%;
+  background-color: transparent;
+  border: 2px solid white;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 10px;
+  color: white;
+  font-weight: bolder;
+}
+.confirmar:hover {
+  cursor: pointer;
+  box-shadow: 0 0px 6px rgba(253, 253, 253, 0.692);
+}
