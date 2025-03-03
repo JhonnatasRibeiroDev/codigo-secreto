@@ -3,20 +3,12 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [userId, setUserId] = useState(localStorage.getItem("userId"));
-  const [name, setName] = useState(localStorage.getItem("userName"));
-  const [email, setEmail] = useState(localStorage.getItem("userEmail"));
+  const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
+  const [name, setName] = useState(sessionStorage.getItem("userName"));
+  const [email, setEmail] = useState(sessionStorage.getItem("userEmail"));
   const [attempts, setAttempts] = useState(
-    parseInt(localStorage.getItem("attempts")) || 15
+    parseInt(sessionStorage.getItem("attempts")) || 15
   );
-
-  useEffect(() => {
-    if (!userId) {
-      const newUserId = crypto.randomUUID();
-      localStorage.setItem("userId", newUserId);
-      setUserId(newUserId);
-    }
-  }, [userId]);
 
   useEffect(() => {
     localStorage.setItem("attempts", attempts);

@@ -5,6 +5,8 @@ import { signInWithGoogle } from "../components/firebaseConfig"; // Importando a
 import logo from "../assets/logo-white.png";
 import logo_user from "../assets/user.png";
 import "../styles/InitialPage.css";
+import { getDoc, doc, updateDoc, increment } from "firebase/firestore";
+import { db } from "../components/firebaseConfig";
 import Cadeado from "../assets/cadeadoLogoBlack.png";
 
 const InitialPage = () => {
@@ -15,12 +17,28 @@ const InitialPage = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    // Recupera o documento atualizado
+    async function pegarDadosDoUsuario() {
+      if (!userId) return;
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setAttempts(userData.attempts);
+        sessionStorage.setItem("attempts", userData.attempts);
+      }
+    }
+    pegarDadosDoUsuario();
+  }, [setAttempts]);
+
+  useEffect(() => {
     // Verifica se o usuário já está logado na sessionStorage
     const storedUserId = sessionStorage.getItem("userId");
     const storedName = sessionStorage.getItem("userName");
     const storedEmail = sessionStorage.getItem("userEmail");
+    const storedAttempts = sessionStorage.getItem("attempts");
 
-    if (storedUserId && storedName && storedEmail) {
+    if (storedUserId && storedName && storedEmail && storedAttempts) {
       setUserId(storedUserId);
       setName(storedName);
       setEmail(storedEmail);
@@ -31,34 +49,35 @@ const InitialPage = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // Chamando a função para fazer o login com Google
-      const result = await signInWithGoogle(); // Agora retornando o resultado corretamente
-      const user = result.user; // Acessando o `user` a partir do resultado
+      const result = await signInWithGoogle();
+      const user = result.user;
 
-      // Verificando se o usuário foi recuperado
-      if (!user) {
-        throw new Error("Usuário não encontrado.");
-      }
+      if (!user) throw new Error("Usuário não encontrado.");
 
-      // Atualizando o estado do usuário no contexto e no sessionStorage
-      setUser(user);
       setUserId(user.uid);
       setName(user.displayName || "");
       setEmail(user.email || "");
-      setAttempts(15); // Inicializa com 15 tentativas
 
-      // Armazenando as informações no sessionStorage
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+      let updatedAttempts = 15; // Valor padrão caso não tenha no Firestore
+
+      if (userDoc.exists()) {
+        updatedAttempts = userDoc.data().attempts || 15;
+      } else {
+        await updateDoc(userRef, { attempts: updatedAttempts });
+      }
+
+      setAttempts(updatedAttempts);
+      sessionStorage.setItem("attempts", updatedAttempts);
       sessionStorage.setItem("userId", user.uid);
       sessionStorage.setItem("userName", user.displayName || "");
       sessionStorage.setItem("userEmail", user.email || "");
-      sessionStorage.setItem("attempts", 15);
 
-      setNext(true); // Redireciona para a página de tentativas
+      setNext(true);
     } catch (error) {
       setError("Erro ao realizar login com Google.");
       console.error("Erro ao fazer login: ", error);
-      console.log("Dados do usuário:", user); // Exibindo o estado atual de `user` (que pode ser null)
-      console.log("next:", next); // Verificando o valor de `next`
     }
   };
 

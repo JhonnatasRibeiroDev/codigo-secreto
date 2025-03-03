@@ -6,11 +6,12 @@ import cadeadoLogoWhite from "../assets/cadeadoLogoWhite.png";
 import cadeado3d from "../assets/cadeado3D.png";
 import seta from "../assets/setaGradiente.png";
 import { auth } from "../components/firebaseConfig";
+import { getDoc, doc, updateDoc, increment } from "firebase/firestore";
+import { db } from "../components/firebaseConfig";
 import "../styles/AttemptsPage.css";
 
 const CODE_LENGTH = 6;
-const SECRET_CODE = import.meta.env.VITE_SECRET_CODE;
-// Código secreto de 6 dígitos
+const SECRET_CODE = import.meta.env.VITE_SECRET_CODE; // Código secreto de 6 dígitos
 
 const AttemptsPage = () => {
   const { attempts, setAttempts, userId, email, name } = useAppContext();
@@ -23,11 +24,29 @@ const AttemptsPage = () => {
     }
   }, [userId, email, name]);
 
-  const handleSubmit = () => {
+  // Torne esta função assíncrona para usar 'await' corretamente
+  const handleSubmit = async () => {
     if (input.join("") === SECRET_CODE) {
       return <Navigate to="/parabens" />;
     }
-    setAttempts(attempts - 1);
+    // Decrementar o valor no banco de dados do Firestore
+    const userRef = doc(db, "users", userId);
+
+    // Atualiza o valor de 'attempts' no Firestore
+    await updateDoc(userRef, {
+      attempts: increment(-1),
+    });
+
+    // Recupera o documento atualizado
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const updatedAttempts = userData.attempts;
+      sessionStorage.setItem("attempts", updatedAttempts); // Armazenar no sessionStorage
+      setAttempts(updatedAttempts); // Atualiza o estado global
+    }
+
+    // Resetar o input após o envio
     setInput(Array(CODE_LENGTH).fill(0));
   };
 
