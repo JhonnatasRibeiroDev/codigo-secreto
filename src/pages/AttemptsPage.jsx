@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Importar useNavigate
+import { useNavigate, Navigate } from "react-router-dom"; // Importar useNavigate
 import { useAppContext } from "../context/AppContext";
 import { signOut } from "firebase/auth";
 import cadeadoLogoWhite from "../assets/cadeadoLogoWhite.png";
