@@ -8,12 +8,63 @@ header.attempts-page-header {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  border: 1px solid white;
+  font-size: 14px;
   margin-top: 10px;
-  border-radius: 50%;
   width: 30px;
   height: 30px;
 }
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  background-image: linear-gradient(
+    125deg,
+    #05f2db 5%,
+    #50bfab 15%,
+    #f23c13 60%,
+    #f23847 90%
+  );
+  animation: fadeOut 3s ease-in-out forwards;
+}
+
+.loading-logo {
+  width: 150px; /* Ajuste o tamanho da logo */
+  opacity: 0;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  transform: scale(0.8);
+  animation: fadeInScale 1.5s ease-in-out forwards,
+    fadeOut 1.5s ease-in-out 1.5s forwards;
+}
+
+/* Animação de fade-in + leve zoom */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animação de fade-out */
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
 .attempts-page main {
   height: 100vh;
   display: flex;

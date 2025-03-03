@@ -1,0 +1,110 @@
+/* Estilo da página de Parabéns - Seletores únicos */
+.congrats-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    125deg,
+    #05f2db 5%,
+    #50bfab 15%,
+    #f23c13 60%,
+    #f23847 90%
+  ); /* Gradiente suave */
+  color: white;
+  text-align: center;
+  height: 100vh;
+}
+
+.congrats-page-content {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.congrats-page-logo {
+  width: 37px;
+  margin-right: 7px;
+}
+
+.congrats-page-title {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.congrats-page-message {
+  font-size: 16px;
+  color: #555;
+}
+
+.congrats-page-button {
+  position: relative;
+  display: inline-block;
+  border-radius: 20px;
+  padding: 10px 20px;
+  background: white;
+  color: #000000;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  overflow: hidden;
+}
+
+.congrats-page-button div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 30px;
+  font-weight: bolder;
+  font-size: 14px;
+}
+
+.congrats-page-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  padding: 2px;
+  background: linear-gradient(
+    125deg,
+    #05f2db 5%,
+    #50bfab 15%,
+    #f23c13 60%,
+    #f23847 90%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.congrats-page-button:hover {
+  scale: 1.05;
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 10px;
+  opacity: 0.8;
+  color: white;
+  margin-bottom: 10px;
+}
+
+/* Estilos para telas menores */
+@media (max-width: 400px) {
+  .congrats-page-title {
+    font-size: 20px;
+  }
+
+  .congrats-page-button div {
+    width: 150px;
+    height: 30px;
+    font-size: 14px;
+  }
+}

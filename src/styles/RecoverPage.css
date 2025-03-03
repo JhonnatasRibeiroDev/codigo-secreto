@@ -1,0 +1,51 @@
+.recover-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #121212;
+  color: white;
+  text-align: center;
+}
+
+.recover-page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.recover-page-input {
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  width: 260px;
+  font-size: 16px;
+  text-align: center;
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.recover-page-button {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.recover-page-button:hover {
+  background-color: #e68900;
+}
+
+.recover-page-message {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ff9800;
+}
