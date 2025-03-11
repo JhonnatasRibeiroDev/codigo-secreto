@@ -1,38 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
-import { signInWithGoogle } from "../components/firebaseConfig"; // Importando a função de login
+import { signInWithGoogle } from "../components/firebaseConfig";
 import logo from "../assets/logo-white.png";
 import logo_user from "../assets/user.png";
 import "../styles/InitialPage.css";
-import { getDoc, doc, updateDoc, increment } from "firebase/firestore";
-import { db } from "../components/firebaseConfig";
 import Cadeado from "../assets/cadeadoLogoBlack.png";
 
 const InitialPage = () => {
   const { userId, setUserId, name, setName, email, setEmail, setAttempts } =
     useAppContext();
+
   const [error, setError] = useState("");
   const [next, setNext] = useState(false);
-  const [user, setUser] = useState(null);
+  const [numero, setNumero] = useState("");
+  const [cpf, setCPF] = useState("");
+  const [showForm, setShowForm] = useState(false); // Controla se exibe os inputs de CPF e telefone
 
   useEffect(() => {
-    // Recupera o documento atualizado
-    async function pegarDadosDoUsuario() {
-      if (!userId) return;
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setAttempts(userData.attempts);
-        sessionStorage.setItem("attempts", userData.attempts);
-      }
-    }
-    pegarDadosDoUsuario();
-  }, [setAttempts]);
-
-  useEffect(() => {
-    // Verifica se o usuário já está logado na sessionStorage
     const storedUserId = sessionStorage.getItem("userId");
     const storedName = sessionStorage.getItem("userName");
     const storedEmail = sessionStorage.getItem("userEmail");
@@ -42,7 +27,7 @@ const InitialPage = () => {
       setUserId(storedUserId);
       setName(storedName);
       setEmail(storedEmail);
-      setAttempts(parseInt(sessionStorage.getItem("attempts"))); // Carrega as tentativas
+      setAttempts(parseInt(storedAttempts));
       setNext(true);
     }
   }, [setUserId, setName, setEmail, setAttempts]);
@@ -58,26 +43,68 @@ const InitialPage = () => {
       setName(user.displayName || "");
       setEmail(user.email || "");
 
-      const userRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userRef);
-      let updatedAttempts = 15; // Valor padrão caso não tenha no Firestore
+      // Consulta ao backend para verificar se o usuário já existe
+      const response = await fetch(
+        `https://seu-backend.com/api/check-user?uid=${user.uid}`
+      );
+      const data = await response.json();
 
-      if (userDoc.exists()) {
-        updatedAttempts = userDoc.data().attempts || 15;
+      if (response.ok && data.exists) {
+        // Usuário já cadastrado → prossegue direto
+        sessionStorage.setItem("userId", user.uid);
+        sessionStorage.setItem("userName", user.displayName);
+        sessionStorage.setItem("userEmail", user.email);
+        sessionStorage.setItem("attempts", data.attempts);
+        setAttempts(data.attempts);
+        setNext(true);
       } else {
-        await updateDoc(userRef, { attempts: updatedAttempts });
+        // Usuário novo → pede CPF e telefone
+        setShowForm(true);
       }
-
-      setAttempts(updatedAttempts);
-      sessionStorage.setItem("attempts", updatedAttempts);
-      sessionStorage.setItem("userId", user.uid);
-      sessionStorage.setItem("userName", user.displayName || "");
-      sessionStorage.setItem("userEmail", user.email || "");
-
-      setNext(true);
     } catch (error) {
       setError("Erro ao realizar login com Google.");
       console.error("Erro ao fazer login: ", error);
+    }
+  };
+
+  const handleRegister = async () => {
+    if (!numero || !cpf) {
+      setError("Preencha todos os campos.");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://seu-backend.com/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid: userId,
+          name,
+          email,
+          telefone: numero,
+          cpf,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Erro ao autenticar no backend");
+      }
+
+      sessionStorage.setItem("userId", userId);
+      sessionStorage.setItem("userName", name);
+      sessionStorage.setItem("userEmail", email);
+      sessionStorage.setItem("telefone", numero);
+      sessionStorage.setItem("cpf", cpf);
+      sessionStorage.setItem("attempts", data.attempts);
+      setAttempts(data.attempts);
+      setNext(true);
+    } catch (error) {
+      setError("Erro ao registrar usuário.");
+      console.error("Erro ao registrar: ", error);
     }
   };
 
@@ -100,18 +127,40 @@ const InitialPage = () => {
               <img src={logo_user} alt="Logo" />
               <h3>Usuário</h3>
             </div>
-            <div className="initial-page-button">
-              <div onClick={handleGoogleLogin}>Entrar com Google</div>
-            </div>
+
+            {!showForm ? (
+              <div className="initial-page-button">
+                <div onClick={handleGoogleLogin}>Entrar com Google</div>
+              </div>
+            ) : (
+              <div className="form-container">
+                <label>Número de Celular:</label>
+                <input
+                  type="tel"
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                  placeholder="Digite seu número"
+                />
+
+                <label>CPF:</label>
+                <input
+                  type="text"
+                  value={cpf}
+                  onChange={(e) => setCPF(e.target.value)}
+                  placeholder="Digite seu CPF"
+                />
+
+                <button onClick={handleRegister}>Confirmar</button>
+              </div>
+            )}
+
+            {error && <p style={{ color: "red" }}>{error}</p>}
           </section>
         </div>
         <footer>
           <p>2025 Código Secreto&copy;</p>
         </footer>
       </main>
-
-      {/*<button onClick={handleGoogleLogin}>Login com Google</button>
-      {error && <p style={{ color: "red" }}>{error}</p>} */}
     </div>
   );
 };
